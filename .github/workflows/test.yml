@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - master
+  create:
 
 # Checkout source, then invoke custom action which is defined at root of this repo (uess is relative)
 jobs:
@@ -18,7 +19,9 @@ jobs:
     steps:
       - name: Get the sources
         uses: actions/checkout@v1
-      - name: Create a release draft for a versoin tag
+      - name: Build and Package (force refresh of index.js)
+        run: npm run all
+      - name: Create a release draft for a version tag
         id: create-release-draft
         uses: ./
       - name: Print the URL of the release draft

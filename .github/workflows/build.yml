@@ -1,0 +1,23 @@
+name: Build
+
+# This workflow runs anytime commits are pushed to master branch
+on:
+  push:
+    branches:
+      - master
+
+# This workflow has a single job to run the build and unit tests on linux and windows
+jobs:
+  build:
+    name: Build and Test
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [windows-latest, ubuntu-latest]
+    steps:
+      - name: Get the sources
+        uses: actions/checkout@v1
+      - name: Restore the dependencies
+        run: npm ci
+      - name: Build
+        run: npm run all

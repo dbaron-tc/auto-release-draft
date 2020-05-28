@@ -1,23 +1,25 @@
-name: "build-test"
-on: # rebuild any PRs and main branch changes
-  pull_request:
+name: Test
+
+# Run on commits to master OR when new branch or tag is created
+on:
   push:
     branches:
       - master
-      - 'releases/*'
+  create:
 
+# Checkout source, then invoke custom action which is defined at root of this repo (uess is relative)
 jobs:
-  build: # make sure build/ci work properly
-    runs-on: ubuntu-latest
+  test:
+    name: Test
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [windows-latest, ubuntu-latest]
     steps:
-    - uses: actions/checkout@v1
-    - run: |
-        npm install
-        npm run all
-  test: # make sure the action works on a clean machine without building
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v1
-    - uses: ./
-      with: 
-        milliseconds: 1000
+      - name: Get the sources
+        uses: actions/checkout@v1
+      - name: Create a release draft for a versoin tag
+        id: create-release-draft
+        uses: ./
+      - name: Print the URL of the release draft
+        run: echo ${{ steps.create-release-draft.outputs.release-url }}
